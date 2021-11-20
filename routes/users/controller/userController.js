@@ -17,6 +17,11 @@ const errorHandler = require("../../utils/errorHandler/errorHandler");
 
 
 async function usersGet(req, res) {
+    console.log('');
+    console.log('');
+    console.log('                usersGet Called');
+    console.log('');
+    console.log('');
 
     try {
         let payload = await User.find(req.body);
@@ -28,30 +33,17 @@ async function usersGet(req, res) {
     } catch (err) {
         res.status(500).json({
             message: "Failed Fetching",
-            error: err
+            error: errorHandler(err)
         });
     }
-    // res.json({
-    //     message: "everything is awesome! cvool"
-    // })
-
-    // try {
-    //     let payload = await User.find(req.body);
-    //     console.log(payload);
-
-    //     res.json({
-    //         message: "Successfully retrieved",
-    //         payload: payload,
-    //     });
-    // } catch (err) {
-    //     res.status(500).json({
-    //         message: "Failed Fetching",
-    //         error: err
-    //     });
-    // }
 }
 
 async function userCreate(req, res) {
+    console.log('');
+    console.log('');
+    console.log('                userCreate Called');
+    console.log('');
+    console.log('');
     const {
         nameFirst,
         nameLast,
@@ -91,6 +83,11 @@ async function userCreate(req, res) {
 }
 
 async function userLogin(req, res) {
+    console.log('');
+    console.log('');
+    console.log('                userLogin Called');
+    console.log('');
+    console.log('');
     const {
         email,
         username,
@@ -137,18 +134,49 @@ async function userLogin(req, res) {
     } catch (err) {
         res.status(500).json({
             message: "Login Error.. WHAT DID YOU DO!!!!",
-            error: err.message
+            error: errorHandler(err)
         })
     }
 
 
 }
 
-// async function
+async function userProfile(req, res) {
+    try {
+        let decodedToken = jwt.decode(req.body.token, process.env.SECRET_KEY);
+        console.log(decodedToken);
+        res.json({
+            token: decodedToken
+        })
+    } catch (err) {
+        res.status(500).json({
+            message: "There is an issue in pulling your profile",
+            error: errorHandler(err)
+        })
+    }
+}
+
+async function userUpdate(req, res) {
+    console.log('');
+    console.log('');
+    console.log('                userUpdate Called');
+    console.log('');
+    console.log('');
+
+    console.log(req.body);
+
+
+    res.json({
+        "message": "Your profile has been updated",
+        "payload": "notyet"
+    })
+}
 
 module.exports = {
     usersGet,
     userCreate,
     userLogin,
+    userProfile,
+    userUpdate,
 
 }
