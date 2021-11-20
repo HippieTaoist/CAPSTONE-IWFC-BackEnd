@@ -143,7 +143,7 @@ async function userLogin(req, res) {
 
 async function userProfile(req, res) {
     try {
-        let decodedToken = jwt.decode(req.body.token, process.env.SECRET_KEY);
+        let decodedToken = jwt.decode(req.header.authorization, process.env.SECRET_KEY);
         console.log(decodedToken);
         res.json({
             token: decodedToken
@@ -165,11 +165,17 @@ async function userUpdate(req, res) {
 
     console.log(req.body);
 
-
+    let decodedToken = jwt.decode(req.header.authorization, process.env.SECRET_KEY);
+    console.log(decodedToken);
     res.json({
-        "message": "Your profile has been updated",
-        "payload": "notyet"
+        token: decodedToken
     })
+
+
+    // res.json({
+    //     "message": "Your profile has been updated",
+    //     "payload": "notyet"
+    // })
 }
 
 module.exports = {
