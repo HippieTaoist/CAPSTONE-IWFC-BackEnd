@@ -137,24 +137,34 @@ async function userLogin(req, res) {
         password,
     } = req.body;
 
+    let reqAttr = (email ? email : username);
+    console.log(reqAttr);
     try {
 
-        let usernameFound = await User.findOne({
-            username: username,
-        })
+        if (!isEmail(reqAttr)) {
+            userFound = await User.findOne({
+                username: username,
+            })
+            console.log('username userFound', userFound);
+        } else {
+            userFound = await User.findOne({
+                email: email,
+            })
+            console.log('email userFound', userFound);
+        }
 
-        console.log(usernameFound);
+        console.log('Final userFound', userFound);
         // let foundUserUsername = await User.findOne({
         //     username: username,
         // })
 
-        if (!usernameFound) {
+        if (!userFound) {
             return res.status(500).json({
                 message: "Error in Logging In User",
                 error: " Go Sign UP",
             })
         } else {
-            let passwordCompare = await bcrypt.compare(password, usernameFound.password);
+            let passwordCompare = await bcrypt.compare(password, userFound.password);
             if (!passwordCompare) {
                 return res.status(500).json({
                     message: "error",
@@ -162,8 +172,8 @@ async function userLogin(req, res) {
                 });
             } else {
                 let jwtToken = jwt.sign({
-                    email: usernameFound.email,
-                    username: usernameFound.username,
+                    email: userFound.email,
+                    username: userFound.username,
 
                 }, process.env.SECRET_KEY, {
                     expiresIn: "2400h",
