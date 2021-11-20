@@ -10,7 +10,8 @@ const {
   userCreate,
   userLogin,
   userProfile,
-  userUpdate
+  userUpdate,
+  userDelete,
 } = require('./controller/userController')
 
 /* GET users listing. */
@@ -23,5 +24,7 @@ router.post('/user-login', userLogin)
 router.get('/user-profile', middlewareJwt, userProfile)
 
 router.put('/user-update', middlewareJwt, userUpdate)
+
+router.delete('/user-delete', middlewareJwt, userDelete)
 
 module.exports = router;
