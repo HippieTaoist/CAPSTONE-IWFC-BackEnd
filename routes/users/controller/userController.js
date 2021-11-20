@@ -14,7 +14,14 @@ const jwt = require("jsonwebtoken");
 
 const errorHandler = require("../../utils/errorHandler/errorHandler");
 
+
+
 async function userDecodeAndFind(data) {
+    console.log('');
+    console.log('');
+    console.log('                userDecodeAndFind Called');
+    console.log('');
+    console.log('');
     console.log("decodedData: ", data);
 
     const {
@@ -22,16 +29,31 @@ async function userDecodeAndFind(data) {
         username
     } = data;
 
-    console.log(email);
-    console.log(username);
+    console.log({
+        email
+    });
+    console.log({
+        username
+    });
 
     let userFound = await User.findOne({
-        email
+        username
     })
 
     console.log(userFound);
 
     return userFound;
+}
+
+async function passwordHasher(password) {
+    console.log('');
+    console.log('');
+    console.log('                passwordHasher Called');
+    console.log('');
+    console.log('');
+    let salt = await bcrypt.genSalt(10);
+    let passwordHashed = await bcrypt.hash(password, salt);
+    return passwordHashed;
 }
 
 
@@ -75,18 +97,18 @@ async function userCreate(req, res) {
     console.log(req.body);
 
     try {
-        let salt = await bcrypt.genSalt(10);
-        let hashedPassword = await bcrypt.hash(password, salt);
+        // let salt = await bcrypt.genSalt(10);
+        let passwordHashed = passwordHasher(password); //await bcrypt.hash(password, salt);
 
-        const createdUser = new User({
+        const userCreated = new User({
             nameFirst,
             nameLast,
             username,
             email,
-            password: hashedPassword,
+            password: passwordHashed,
         });
 
-        let savedUser = await createdUser.save();
+        let savedUser = await userCreated.save(); //await passwordHasher(req.body)
 
         res.json({
             message: "Successful",
@@ -97,7 +119,8 @@ async function userCreate(req, res) {
             .status(500)
             .json({
                 message: "Error in Creating User",
-                error: errorHandler(err)
+                error: errorHandler(err),
+                errMess: err.message
             });
     }
 }
@@ -116,22 +139,22 @@ async function userLogin(req, res) {
 
     try {
 
-        let userEmailFound = await User.findOne({
-            email: email,
+        let usernameFound = await User.findOne({
+            username: username,
         })
 
-        console.log(userEmailFound);
+        console.log(usernameFound);
         // let foundUserUsername = await User.findOne({
         //     username: username,
         // })
 
-        if (!userEmailFound) {
+        if (!usernameFound) {
             return res.status(500).json({
                 message: "Error in Logging In User",
                 error: " Go Sign UP",
             })
         } else {
-            let passwordCompare = await bcrypt.compare(password, userEmailFound.password);
+            let passwordCompare = await bcrypt.compare(password, usernameFound.password);
             if (!passwordCompare) {
                 return res.status(500).json({
                     message: "error",
@@ -139,8 +162,8 @@ async function userLogin(req, res) {
                 });
             } else {
                 let jwtToken = jwt.sign({
-                    email: userEmailFound.email,
-                    username: userEmailFound.username,
+                    email: usernameFound.email,
+                    username: usernameFound.username,
 
                 }, process.env.SECRET_KEY, {
                     expiresIn: "2400h",
@@ -162,6 +185,11 @@ async function userLogin(req, res) {
 }
 
 async function userProfile(req, res) {
+    console.log('');
+    console.log('');
+    console.log('                userProfile Called');
+    console.log('');
+    console.log('');
     try {
         const decodedData = res.locals.decodedData;
         console.log(decodedData);
@@ -185,9 +213,11 @@ async function userUpdate(req, res) {
     console.log('');
     console.log('');
 
-    console.log(req.body);
+    console.log('req.body:', req.body);
 
-    let userFound = await userDecodeAndFind(res.locals.decodedData)
+    console.log(`res.locals.dataDecoded:`, res.locals.dataDecoded);
+
+    let userFound = await userDecodeAndFind(res.locals.dataDecoded)
 
     const {
         _id,
@@ -218,6 +248,19 @@ async function userUpdate(req, res) {
         try {
             if (req.body.passwordCompare === req.body.password && req.body.password !== password && isStrongPassword(req.body.password)) {
                 console.log("MY PASSWORD IS SOOOOOO STRONG!");
+
+                let passwordHashed = passwordHasher(req.body.password);
+                console.log(passwordHashed);
+
+                let userUpdate = await User.findOneAndUpdate(_id, {
+                    password: passwordHashed
+                })
+
+                res.json({
+                    message: "Password has been changed!",
+                    payload: userUpdate
+                });
+
             }
         } catch (error) {
             res.status(500).json({

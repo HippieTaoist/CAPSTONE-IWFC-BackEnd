@@ -4,13 +4,16 @@ function middlewareJwt(req, res, next) {
     try {
         console.log(req.headers);
         if (req.headers && req.headers.authorization) {
-            let notDecodedToken = req.headers.authorization;
-            let slicedToken = notDecodedToken.slice(7);
-            let decodedToken = jwt.verify(slicedToken, process.env.SECRET_KEY);
-
-            res.locals.decodedData = decodedToken;
-            console.log(decodedToken);
+            let tokenNotDecoded = req.headers.authorization;
+            // console.log(`middlewareJwt:tokenNotDecoded:`, tokenNotDecoded);
+            let tokenSliced = tokenNotDecoded.slice(7);
+            // console.log('middlewareJwt:tokenSliced: ', tokenSliced);
+            let tokenDecoded = jwt.verify(tokenSliced, process.env.SECRET_KEY);
+            // console.log('middlewareJwt:tokenDecoded: ', tokenDecoded);
+            res.locals.dataDecoded = tokenDecoded;
+            // console.log('middlewareJwt:res.locals.dataDecoded: ', res.locals.dataDecoded);
             next();
+            // console.log(`middlewareJwt:res.locals:${res.locals}`);
         } else {
             throw {
                 message: "Authentication Denied!"
