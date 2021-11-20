@@ -249,17 +249,14 @@ async function userUpdate(req, res) {
             if (req.body.passwordCompare === req.body.password && req.body.password !== password && isStrongPassword(req.body.password)) {
                 console.log("MY PASSWORD IS SOOOOOO STRONG!");
 
-                let passwordHashed = passwordHasher(req.body.password);
-                console.log(passwordHashed);
+                let passwordHashed = await passwordHasher(req.body.password);
+                console.log('passwordHashed: ', passwordHashed);
 
                 let userUpdate = await User.findOneAndUpdate(_id, {
                     password: passwordHashed
                 })
 
-                res.json({
-                    message: "Password has been changed!",
-                    payload: userUpdate
-                });
+
 
             }
         } catch (error) {
