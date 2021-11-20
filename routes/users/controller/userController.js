@@ -218,6 +218,7 @@ async function userUpdate(req, res) {
     console.log(`res.locals.dataDecoded:`, res.locals.dataDecoded);
 
     let userFound = await userDecodeAndFind(res.locals.dataDecoded)
+    console.log('userFound: ', userFound);
 
     const {
         _id,
@@ -227,50 +228,107 @@ async function userUpdate(req, res) {
         favoringCryptoPrograms
     } = userFound
 
+    switch (req.body.updateType) {
+        case 'email':
+            if (req.body.email) {
+                let emailUpdate = await User.findOneAndUpdate({
+                    _id: _id
+                }, {
+                    email: req.body.email
+                }, {
+                    new: true
+                })
+
+                console.log(emailUpdate);
+                console.log(email);
+                res.json({
+                    payload: emailUpdate
+                })
+            }
+            break;
+        case 'password':
+            if (req.body.password && req.body.passwordCompare) {
+                console.log(req.body.password, "||", req.body.passwordCompare);
+                try {
+                    if (req.body.passwordCompare === req.body.password && req.body.password !== password && isStrongPassword(req.body.password)) {
+                        console.log("MY PASSWORD IS SOOOOOO STRONG!");
+
+                        let passwordHashed = await passwordHasher(req.body.password);
+                        console.log('passwordHashed: ', passwordHashed);
+
+                        console.log('_id', _id);
+                        let passwordUpdate = await User.findOneAndUpdate({
+                            _id: _id
+                        }, {
+                            password: passwordHashed
+                        }, {
+                            new: true
+                        })
+
+                        console.log('passwordUpdate: ', passwordUpdate);
+                        res.json({
+                            passwordUpdate
+                        })
+
+                    } else {
+                        res.status(500).json({
+                            message: "there is an issue with the password"
+                        })
+                    }
+                } catch (error) {
+                    res.status(500).json({
+                        message: "An error has occurred on your update."
+                    })
+
+                }
+            }
+            break;
+
+        default:
+
+    }
     // username cannot be changed
 
     // email can be changed && needs to be verified by email prior to changing
-    if (req.body.email) {
-        let userUpdated = await User.findOneAndUpdate({
-            _id
-        }, {
-            email: req.body.email
-        }, {
-            new: true
-        })
-
-        console.log(userUpdated);
-        console.log(email);
-    }
-
-    if (req.body.password && req.body.passwordCompare) {
-        console.log(req.body.password, "||", req.body.passwordCompare);
-        try {
-            if (req.body.passwordCompare === req.body.password && req.body.password !== password && isStrongPassword(req.body.password)) {
-                console.log("MY PASSWORD IS SOOOOOO STRONG!");
-
-                let passwordHashed = await passwordHasher(req.body.password);
-                console.log('passwordHashed: ', passwordHashed);
-
-                let userUpdate = await User.findOneAndUpdate(_id, {
-                    password: passwordHashed
-                })
 
 
+    // if (req.body.password && req.body.passwordCompare) {
+    //     console.log(req.body.password, "||", req.body.passwordCompare);
+    //     try {
+    //         if (req.body.passwordCompare === req.body.password && req.body.password !== password && isStrongPassword(req.body.password)) {
+    //             console.log("MY PASSWORD IS SOOOOOO STRONG!");
 
-            }
-        } catch (error) {
-            res.status(500).json({
-                message: "An error has occurred on your update."
-            })
+    //             let passwordHashed = await passwordHasher(req.body.password);
+    //             console.log('passwordHashed: ', passwordHashed);
 
-        }
-    }
+    //             console.log('_id', _id);
+    //             let userUpdate = await User.findOneAndUpdate({
+    //                 _id: _id
+    //             }, {
+    //                 password: passwordHashed
+    //             }, {
+    //                 new: true
+    //             })
+
+    //             console.log('userUpdate: ', userUpdate);
+
+    //         } else {
+    //             res.status(500).json({
+    //                 message: "there is an issue with the password"
+    //             })
+    //         }
+    //     } catch (error) {
+    //         res.status(500).json({
+    //             message: "An error has occurred on your update."
+    //         })
+
+    //     }
+    // }
 
 
-    res.json({
-        "payload": userFound
-    })
+    // res.json({
+    //     "payload": userFound
+    // })
     // think of how you are going to seperate this. update use should be called once per request. However if we set it up to send a param with it we can seperate function within it. case / switch type of setup.
 
 
