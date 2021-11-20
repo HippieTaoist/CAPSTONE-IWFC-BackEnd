@@ -197,15 +197,9 @@ async function userUpdate(req, res) {
         favoringCryptoPrograms
     } = userFound
 
-    console.log(_id,
-        email,
-        password,
-        favoringCryptos,
-        favoringCryptoPrograms);
-
     // username cannot be changed
 
-    // email can be changed
+    // email can be changed && needs to be verified by email prior to changing
     if (req.body.email) {
         let userUpdated = await User.findOneAndUpdate({
             _id
@@ -219,9 +213,23 @@ async function userUpdate(req, res) {
         console.log(email);
     }
 
+    if (req.body.password && req.body.passwordCompare) {
+        console.log(req.body.password, "||", req.body.passwordCompare);
+        try {
+            if (req.body.passwordCompare === req.body.password && req.body.password !== password && isStrongPassword(req.body.password)) {
+                console.log("MY PASSWORD IS SOOOOOO STRONG!");
+            }
+        } catch (error) {
+            res.status(500).json({
+                message: "An error has occurred on your update."
+            })
+
+        }
+    }
+
 
     res.json({
-        "User Found": userFound
+        "payload": userFound
     })
     // think of how you are going to seperate this. update use should be called once per request. However if we set it up to send a param with it we can seperate function within it. case / switch type of setup.
 
