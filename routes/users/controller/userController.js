@@ -217,6 +217,7 @@ async function userProfile(req, res) {
 }
 
 async function userUpdate(req, res) {
+    S
     console.log('');
     console.log('');
     console.log('                userUpdate Called');
@@ -239,6 +240,7 @@ async function userUpdate(req, res) {
     } = userFound
 
     switch (req.body.updateType) {
+
         case 'email':
             if (req.body.email) {
                 let emailUpdate = await User.findOneAndUpdate({
@@ -256,6 +258,7 @@ async function userUpdate(req, res) {
                 })
             }
             break;
+
         case 'password':
             if (req.body.password && req.body.passwordCompare) {
                 console.log(req.body.password, "||", req.body.passwordCompare);
@@ -279,7 +282,6 @@ async function userUpdate(req, res) {
                         res.json({
                             passwordUpdate
                         })
-
                     } else {
                         res.status(500).json({
                             message: "there is an issue with the password"
@@ -289,64 +291,35 @@ async function userUpdate(req, res) {
                     res.status(500).json({
                         message: "An error has occurred on your update."
                     })
-
                 }
             }
             break;
-
         default:
-
+            break;
     }
-    // username cannot be changed
+}
 
-    // email can be changed && needs to be verified by email prior to changing
+async function userDelete(req, res) {
+    console.log('');
+    console.log('');
+    console.log('                userDelete Called');
+    console.log('');
+    console.log('');
+    console.log('req.body:', req.body);
 
+    console.log(`res.locals.dataDecoded:`, res.locals.dataDecoded);
 
-    // if (req.body.password && req.body.passwordCompare) {
-    //     console.log(req.body.password, "||", req.body.passwordCompare);
-    //     try {
-    //         if (req.body.passwordCompare === req.body.password && req.body.password !== password && isStrongPassword(req.body.password)) {
-    //             console.log("MY PASSWORD IS SOOOOOO STRONG!");
+    let userFound = await userDecodeAndFind(res.locals.dataDecoded)
+    console.log('userFound: ', userFound);
 
-    //             let passwordHashed = await passwordHasher(req.body.password);
-    //             console.log('passwordHashed: ', passwordHashed);
+    const {
+        _id,
+        email,
+        password,
+        favoringCryptos,
+        favoringCryptoPrograms
+    } = userFound
 
-    //             console.log('_id', _id);
-    //             let userUpdate = await User.findOneAndUpdate({
-    //                 _id: _id
-    //             }, {
-    //                 password: passwordHashed
-    //             }, {
-    //                 new: true
-    //             })
-
-    //             console.log('userUpdate: ', userUpdate);
-
-    //         } else {
-    //             res.status(500).json({
-    //                 message: "there is an issue with the password"
-    //             })
-    //         }
-    //     } catch (error) {
-    //         res.status(500).json({
-    //             message: "An error has occurred on your update."
-    //         })
-
-    //     }
-    // }
-
-
-    // res.json({
-    //     "payload": userFound
-    // })
-    // think of how you are going to seperate this. update use should be called once per request. However if we set it up to send a param with it we can seperate function within it. case / switch type of setup.
-
-
-
-    // res.json({
-    //     "message": "Your profile has been updated",
-    //     "payload": "notyet"
-    // })
 }
 
 module.exports = {
@@ -355,5 +328,6 @@ module.exports = {
     userLogin,
     userProfile,
     userUpdate,
+    userDelete
 
 }
