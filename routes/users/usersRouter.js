@@ -14,7 +14,7 @@ const {
 } = require('./controller/userController')
 
 /* GET users listing. */
-router.get('/', usersGet)
+router.get('/', middlewareJwt, usersGet)
 
 router.post('/user-create', userCreate)
 

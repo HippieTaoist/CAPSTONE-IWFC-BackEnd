@@ -14,6 +14,26 @@ const jwt = require("jsonwebtoken");
 
 const errorHandler = require("../../utils/errorHandler/errorHandler");
 
+async function userDecodeAndFind(data) {
+    console.log("decodedData: ", data);
+
+    const {
+        email,
+        username
+    } = data;
+
+    console.log(email);
+    console.log(username);
+
+    let userFound = await User.findOne({
+        email
+    })
+
+    console.log(userFound);
+
+    return userFound;
+}
+
 
 
 async function usersGet(req, res) {
@@ -143,11 +163,13 @@ async function userLogin(req, res) {
 
 async function userProfile(req, res) {
     try {
-        let decodedToken = jwt.decode(req.header.authorization, process.env.SECRET_KEY);
-        console.log(decodedToken);
+        const decodedData = res.locals.decodedData;
+        console.log(decodedData);
+
         res.json({
-            token: decodedToken
-        })
+            token: decodedData
+        });
+
     } catch (err) {
         res.status(500).json({
             message: "There is an issue in pulling your profile",
@@ -165,11 +187,44 @@ async function userUpdate(req, res) {
 
     console.log(req.body);
 
-    let decodedToken = jwt.decode(req.header.authorization, process.env.SECRET_KEY);
-    console.log(decodedToken);
+    let userFound = await userDecodeAndFind(res.locals.decodedData)
+
+    const {
+        _id,
+        email,
+        password,
+        favoringCryptos,
+        favoringCryptoPrograms
+    } = userFound
+
+    console.log(_id,
+        email,
+        password,
+        favoringCryptos,
+        favoringCryptoPrograms);
+
+    // username cannot be changed
+
+    // email can be changed
+    if (req.body.email) {
+        let userUpdated = await User.findOneAndUpdate({
+            _id
+        }, {
+            email: req.body.email
+        }, {
+            new: true
+        })
+
+        console.log(userUpdated);
+        console.log(email);
+    }
+
+
     res.json({
-        token: decodedToken
+        "User Found": userFound
     })
+    // think of how you are going to seperate this. update use should be called once per request. However if we set it up to send a param with it we can seperate function within it. case / switch type of setup.
+
 
 
     // res.json({
