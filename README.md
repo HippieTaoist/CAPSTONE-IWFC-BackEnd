@@ -39,6 +39,7 @@
 		-Future: On email change a successful verification from email will be needed.
 ### Delete
 	- Users can delete their account. | Will release username in database.
+		-Success: User was deleted successfully from MongoDB.
 
 -Users will have CRUD operations on the crypto and programs they choose to associate with.
 -2-3 features

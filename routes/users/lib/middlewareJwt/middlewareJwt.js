@@ -9,9 +9,9 @@ function middlewareJwt(req, res, next) {
             let tokenSliced = tokenNotDecoded.slice(7);
             // console.log('middlewareJwt:tokenSliced: ', tokenSliced);
             let tokenDecoded = jwt.verify(tokenSliced, process.env.SECRET_KEY);
-            // console.log('middlewareJwt:tokenDecoded: ', tokenDecoded);
+            console.log('middlewareJwt:tokenDecoded: ', tokenDecoded);
             res.locals.dataDecoded = tokenDecoded;
-            // console.log('middlewareJwt:res.locals.dataDecoded: ', res.locals.dataDecoded);
+            console.log('middlewareJwt:res.locals.dataDecoded: ', res.locals.dataDecoded);
             next();
             // console.log(`middlewareJwt:res.locals:${res.locals}`);
         } else {

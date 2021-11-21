@@ -13,51 +13,8 @@ const jwt = require("jsonwebtoken");
 
 
 const errorHandler = require("../../utils/errorHandler/errorHandler");
-
-
-
-async function userDecodeAndFind(data) {
-    console.log('');
-    console.log('');
-    console.log('                userDecodeAndFind Called');
-    console.log('');
-    console.log('');
-    console.log("decodedData: ", data);
-
-    const {
-        email,
-        username
-    } = data;
-
-    // console.log({
-    //     email
-    // });
-    // console.log({
-    //     username
-    // });
-
-    let userFound = await User.findOne({
-        username
-    })
-
-    // console.log(userFound);
-
-    return userFound;
-}
-
-async function passwordHasher(password) {
-    console.log('');
-    console.log('');
-    console.log('                passwordHasher Called');
-    console.log('');
-    console.log('');
-
-    let salt = await bcrypt.genSalt(10);
-    let passwordHashed = await bcrypt.hash(password, salt);
-
-    return passwordHashed;
-}
-
+const userDecodeAndFind = require("../../utils/userDecodeAndFind/userDecodeAndFind")
+const passwordHasher = require("../../utils/passwordHasher/passwordHasher")
 
 
 async function usersGet(req, res) {
@@ -203,11 +160,11 @@ async function userProfile(req, res) {
     console.log('');
     console.log('');
     try {
-        const decodedData = res.locals.decodedData;
-        console.log(decodedData);
+        const dataDecoded = res.locals.dataDecoded;
+        console.log(dataDecoded);
 
         res.json({
-            token: decodedData
+            token: dataDecoded
         });
 
     } catch (err) {
@@ -219,7 +176,7 @@ async function userProfile(req, res) {
 }
 
 async function userUpdate(req, res) {
-    S
+
     console.log('');
     console.log('');
     console.log('                userUpdate Called');
@@ -297,6 +254,7 @@ async function userUpdate(req, res) {
             }
             break;
         default:
+            console.log('not sure what to default yet');
             break;
     }
 }

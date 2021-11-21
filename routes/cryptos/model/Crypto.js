@@ -9,6 +9,14 @@ const cryptoSchema = new mongoose.Schema({
     _id: {
         type: String
     },
+    logoImgSrc: {
+        type: String,
+        validate: [isURL, "Logo Img Src URL incorrectly formatted"]
+    },
+    nameCreator: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'user'
+    },
     nameCrypto: {
         type: String,
         validate: [isAlpha, "Letters Only"]
@@ -17,19 +25,19 @@ const cryptoSchema = new mongoose.Schema({
         type: String,
         validate: [isAlpha, "Letters Only"]
     },
-    logoImgSrc: {
-        type: String,
-        validate: [isURL, "Logo Img Src URL incorrectly formatted"]
-    },
     website: {
         type: String,
         validate: [isURL, "Website URL incorrectly formatted"]
     },
-    favoringUsers: [{
+    usersFavored: [{
         type: mongoose.Schema.ObjectId,
         ref: "user"
     }],
-    favoringPrograms: [{
+    usersUnfavored: [{
+        type: mongoose.Schema.ObjectId,
+        ref: "user"
+    }],
+    programsAffiliated: [{
         type: mongoose.Schema.ObjectId,
         ref: "cryptoProgram"
     }]

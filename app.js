@@ -31,7 +31,7 @@ const mongoose = require('mongoose')
     console.log("         B_{WE ARE UP!}_B    ");
     console.log("         ___|        |___   ");
     console.log("        /                \\ ");
-    console.log('        | Stackin\' Sats  |        ');
+    console.log('        |  Stackin\' Sats |        ');
     console.log("        |                |");
     console.log("        {EE____________EE}        ");
   })
