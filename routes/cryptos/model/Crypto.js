@@ -25,6 +25,9 @@ const cryptoSchema = new mongoose.Schema({
         type: String,
         validate: [isAlpha, "Letters Only"]
     },
+    priceCurrent: {
+        type: Number,
+    },
     website: {
         type: String,
         validate: [isURL, "Website URL incorrectly formatted"]
