@@ -8,7 +8,8 @@ const {
 const {
     cryptosGet,
     cryptoCreate,
-    cryptoUpdate
+    cryptoUpdate,
+    cryptoDelete,
 } = require('./controller/cryptoController')
 
 /* GET Cryptos Saved By Users */
@@ -17,6 +18,8 @@ router.get('/', middlewareJwt, cryptosGet)
 router.post('/crypto-create', middlewareJwt, cryptoCreate)
 
 router.put('/crypto-update', middlewareJwt, cryptoUpdate)
+
+router.delete('/crypto-delete', middlewareJwt, cryptoDelete)
 
 // function (req, res, next) {
 //     res.json({
