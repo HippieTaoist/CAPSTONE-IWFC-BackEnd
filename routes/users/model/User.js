@@ -41,7 +41,10 @@ const userSchema = new mongoose.Schema({
     favoringCryptoPrograms: [{
         type: mongoose.Schema.ObjectId,
         ref: "cryptoProgram"
-    }]
+    }],
+    adminLevel: {
+        type: Number,
+    }
 }, {
     timestamps: true,
 })
