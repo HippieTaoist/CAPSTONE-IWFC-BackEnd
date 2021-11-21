@@ -30,20 +30,30 @@
 ## Create | Read | Update | Delete
 ### Create
 	- Users can create a new user with appropriate parameters met
+	- Users can add crypto
+		-Future: Crypto Symbol added must match with that Symbol used in standard reference to crypto.
 ### Read
 	- Users can read from the database with appropriate permissions
+	- Users can read cryptos available.
 ### Update
 	- Users can update the database with appropriate permissions and limited parameters. Email can be changed, but username cannot.
 		-Success: Email and Password have been changed.
 			- Based on email||password switch case to be sent from front end under json: {"updateType" :"email"||"password"} <-not code
 		-Future: On email change a successful verification from email will be needed.
+	-User can update favoring and unfavoring crypto with a restriction of not being able to do both and will be removed from both databases.
+	-Future: other update aspects will come with adminLevel.
 ### Delete
 	- Users can delete their account. | Will release username in database.
 		-Success: User was deleted successfully from MongoDB.
+	-Crypto can be deleted through use of Thunder Client/postman, but not implemented on site. Will put in after adminLevel aspect is established
+		- user wil be able to delete crypto if:
+			- they initiated creation
+			- there are no other users favoring the crypto
+		- this will hopefully bring down amount of bad creations.
 
--Users will have CRUD operations on the crypto and programs they choose to associate with.
--2-3 features
-	Favorite Cryptos to account
+
+## Still Working On
+-Users will have CRUD operations on the programs they choose to associate with.
 Favorite Programs to account
 Sort Program through multiple params
 Sort Crypto through params
