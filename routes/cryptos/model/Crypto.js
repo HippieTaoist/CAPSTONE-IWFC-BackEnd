@@ -1,18 +1,21 @@
 mongoose = require("mongoose");
 
-import {
+const {
     isAlpha,
     isURL
-} from "validator";
+} = require("validator");
 
 const cryptoSchema = new mongoose.Schema({
+    _id: {
+        type: String
+    },
     nameCrypto: {
         type: String,
-        validate: [isAlpha, "Letters Only In First Name"]
+        validate: [isAlpha, "Letters Only"]
     },
     nameSymbol: {
         type: String,
-        validate: [isAlpha, "Letters Only In Last Name"]
+        validate: [isAlpha, "Letters Only"]
     },
     logoImgSrc: {
         type: String,

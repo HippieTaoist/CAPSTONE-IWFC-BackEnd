@@ -6,13 +6,14 @@ const {
 } = require('../users/lib/middlewareJwt/middlewareJwt')
 
 const {
-    cryptosGet
+    cryptosGet,
+    cryptoCreate
 } = require('./controller/cryptoController')
 
 /* GET Cryptos Saved By Users */
 router.get('/', middlewareJwt, cryptosGet)
 
-
+router.post('/crypto-create', middlewareJwt, cryptoCreate)
 
 // function (req, res, next) {
 //     res.json({
