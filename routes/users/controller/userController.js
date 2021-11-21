@@ -29,18 +29,18 @@ async function userDecodeAndFind(data) {
         username
     } = data;
 
-    console.log({
-        email
-    });
-    console.log({
-        username
-    });
+    // console.log({
+    //     email
+    // });
+    // console.log({
+    //     username
+    // });
 
     let userFound = await User.findOne({
         username
     })
 
-    console.log(userFound);
+    // console.log(userFound);
 
     return userFound;
 }
@@ -51,8 +51,10 @@ async function passwordHasher(password) {
     console.log('                passwordHasher Called');
     console.log('');
     console.log('');
+
     let salt = await bcrypt.genSalt(10);
     let passwordHashed = await bcrypt.hash(password, salt);
+
     return passwordHashed;
 }
 
@@ -98,7 +100,7 @@ async function userCreate(req, res) {
 
     try {
         // let salt = await bcrypt.genSalt(10);
-        let passwordHashed = passwordHasher(password); //await bcrypt.hash(password, salt);
+        let passwordHashed = await passwordHasher(password); //await bcrypt.hash(password, salt);
 
         const userCreated = new User({
             nameFirst,
@@ -305,6 +307,7 @@ async function userDelete(req, res) {
     console.log('                userDelete Called');
     console.log('');
     console.log('');
+
     console.log('req.body:', req.body);
 
     console.log(`res.locals.dataDecoded:`, res.locals.dataDecoded);
@@ -320,6 +323,15 @@ async function userDelete(req, res) {
         favoringCryptoPrograms
     } = userFound
 
+    let userDeletePasswordCheck = await bcrypt.compare(req.body.password, password);
+    let userDeleteDoubleCheck = req.body.doubleChecked
+
+    console.log(userDeletePasswordCheck);
+    console.log(userDeleteDoubleCheck);
+
+    User.deleteOne({
+        _id: _id
+    }).then(console.log(`User has been deleted and declared ${userFound}`));
 }
 
 module.exports = {
