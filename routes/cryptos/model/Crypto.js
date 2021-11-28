@@ -6,9 +6,6 @@ const {
 } = require("validator");
 
 const cryptoSchema = new mongoose.Schema({
-    _id: {
-        type: String
-    },
     logoImgSrc: {
         type: String,
         validate: [isURL, "Logo Img Src URL incorrectly formatted"]
@@ -23,6 +20,7 @@ const cryptoSchema = new mongoose.Schema({
     },
     nameSymbol: {
         type: String,
+        unique: true,
         validate: [isAlpha, "Letters Only"]
     },
     priceCurrent: {
