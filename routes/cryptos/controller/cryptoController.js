@@ -4,7 +4,10 @@ const userDecodeAndFind = require("../../utils/userDecodeAndFind/userDecodeAndFi
 const errorHandler = require("../../utils/errorHandler/errorHandler");
 const AxiosCoinMarketCap = require("../../utils/axios/AxiosCoinMarketCap.js");
 const AxiosKuCoinGetAllPrices_USD = require("../../utils/axios/AxiosKuCoin");
-const cryptoCardCreator = require("../../utils/cryptoCard/cryptoCard");
+const {
+  cryptoCardCreator,
+  cryptoCardPriceUpdater,
+} = require("../../utils/cryptoCard/cryptoCard");
 
 async function cryptosGet(req, res) {
   console.log("");
@@ -114,11 +117,12 @@ async function cryptoUpdate(req, res) {
 
       // future place to check on admin level for updating crypto
       // otherwise update priceCurrent, usersFavored, usersUnfavored, usersUnfavored
-      if (priceCurrent) {
-        console.log(`we have a Current Price of ${priceCurrent}`);
 
-        cryptoFound.priceCurrent.set(priceCurrent);
-      }
+      let newPrice = await cryptoCardPriceUpdater(cryptoFound.symbol);
+
+      console.log(`we have a Current Price of $${newPrice}`);
+
+      cryptoFound.priceCurrent.set(newPrice);
 
       // pull from both if double truth comes in.
       if (userFavored && userUnfavored) {
