@@ -7,6 +7,7 @@ const AxiosKuCoinGetAllPrices_USD = require("../../utils/axios/AxiosKuCoin");
 const {
   cryptoCardCreator,
   cryptoCardPriceUpdater,
+  cryptoFavor,
 } = require("../../utils/cryptoCard/cryptoCard");
 
 async function cryptosGet(req, res) {
@@ -98,13 +99,14 @@ async function cryptoUpdate(req, res) {
     logoImgSrc,
     priceCurrent,
     website,
-    userFavored,
-    userUnfavored,
+    favored,
+    // userUnfavored,
   } = req.body;
 
   console.log(req.body);
 
   console.log(res.locals.dataDecoded);
+
   let userFound = await userDecodeAndFind(res.locals.dataDecoded);
   // console.log(userFound);
 
@@ -113,44 +115,33 @@ async function cryptoUpdate(req, res) {
 
   try {
     if (cryptoFound && userFound) {
-      console.log("We got both parties present cryptoFound and userFound");
+      // console.log("We got both parties present cryptoFound and userFound");
 
       // future place to check on admin level for updating crypto
       // otherwise update priceCurrent, usersFavored, usersUnfavored, usersUnfavored
-
+      console.log("CF", cryptoFound.usersFavored);
       let newPrice = await cryptoCardPriceUpdater(cryptoFound.symbol);
-
+      let updatedCrypto;
       console.log(`we have a Current Price of $${newPrice}`);
 
-      let updateCryptoPrice = await Crypto.findByIdAndUpdate(
-        cryptoFound._id,
-        { priceCurrent: newPrice },
+      await cryptoFound.updateOne(
+        { $set: { priceCurrent: newPrice } },
         { new: true }
       );
-      // cryptoFound.priceCurrent.set(newPrice);
 
       // pull from both if double truth comes in.
-      if (userFavored && userUnfavored) {
-        cryptoFound.usersFavored.pull(userFound);
-        cryptoFound.usersUnfavored.pull(userFound);
-      } else {
-        if (userFavored) {
-          cryptoFound.usersFavored.addToSet(userFound);
-          cryptoFound.usersUnfavored.pull(userFound);
-        }
-        if (userUnfavored) {
-          cryptoFound.usersUnfavored.addToSet(userFound);
-          cryptoFound.usersFavored.pull(userFound);
-        }
-      }
 
-      let cryptoUpdated = await cryptoFound.save();
-      console.log(cryptoUpdated);
+      updatedCrypto = await cryptoFavor(cryptoFound, favored, userFound);
+      console.log(updatedCrypto);
 
       res.json({
-        message: "Successfully updated",
-        payload: cryptoUpdated,
+        message: "Success",
+        payload: updatedCrypto,
       });
+
+      // let cryptoUpdated = await cryptoFound.save();
+      // console.log(cryptoUpdated);
+      // console.log("line165");
     } else
       res.status(404).json({
         message: "Issue with findin crypto. Check again or add new crypto.",
