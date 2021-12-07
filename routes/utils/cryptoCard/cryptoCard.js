@@ -87,4 +87,42 @@ async function siteCryptoCardInfoUpdater(siteCryptoArray) {
   `/v1/cryptocurrency/info?symbol=${siteCryptoArray}`;
 }
 
-module.exports = { cryptoCardCreator, cryptoCardPriceUpdater };
+async function cryptoFavor(cryptoFound, favored, userFound) {
+  if (favored) {
+    // console.log("adding favored crypto");
+    await cryptoFound.updateOne(
+      {
+        $addToSet: { usersFavored: userFound._id },
+      },
+      { new: true }
+    );
+
+    await cryptoFound.updateOne(
+      {
+        $pull: { usersUnfavored: userFound._id },
+      },
+      { new: true },
+      await cryptoFound.save()
+    );
+    return cryptoFound;
+  } else {
+    await cryptoFound.updateOne(
+      {
+        $addToSet: { usersUnfavored: userFound._id },
+      },
+      { new: true }
+    );
+    if (cryptoFound.usersFavored.includes(userFound._id)) {
+      await cryptoFound.updateOne(
+        {
+          $pull: { usersFavored: userFound._id },
+        },
+        { new: true },
+        await cryptoFound.save()
+      );
+      return cryptoFound;
+    }
+  }
+}
+
+module.exports = { cryptoCardCreator, cryptoCardPriceUpdater, cryptoFavor };
