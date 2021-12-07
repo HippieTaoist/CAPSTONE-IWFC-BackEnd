@@ -1,4 +1,5 @@
 const AxiosCoinMarketCap = require("../axios/AxiosCoinMarketCap");
+const AxiosKuCoinGetAllPrices_USD = require("../axios/AxiosKuCoin");
 const Crypto = require("../../cryptos/model/Crypto");
 const axios = require("axios");
 
@@ -46,13 +47,16 @@ async function cryptoCardCreator(cryptoSymbol) {
         urls,
       } = foundCryptoDetails.data.data[uppercaseSymbol];
 
+      let currentPrice = await cryptoCardPriceUpdater(uppercaseSymbol);
+      console.log("CP", currentPrice);
+
       let newCrypto = new Crypto({
         cmcId: id,
         name,
         symbol,
         category,
         logo,
-        priceCurrent: 0,
+        priceCurrent: currentPrice,
         slug,
         logo,
         subreddit,
@@ -70,13 +74,16 @@ async function cryptoCardCreator(cryptoSymbol) {
 
 async function cryptoCardPriceUpdater(cryptoSymbol) {
   let crypto_USDPriceObject = await AxiosKuCoinGetAllPrices_USD();
-
+  let returnedPrice;
   for (const crypto in crypto_USDPriceObject) {
-    console.log(`${crypto}: ${crypto_USDPriceObject[crypto]}`);
+    // console.log(`${crypto}: ${crypto_USDPriceObject[crypto]}`);
+    crypto === cryptoSymbol && (returnedPrice = crypto_USDPriceObject[crypto]);
   }
+  console.log();
+  return returnedPrice;
 }
 
-async function cryptoCardInfoUpdater(siteCryptoArray) {
+async function siteCryptoCardInfoUpdater(siteCryptoArray) {
   `/v1/cryptocurrency/info?symbol=${siteCryptoArray}`;
 }
 
