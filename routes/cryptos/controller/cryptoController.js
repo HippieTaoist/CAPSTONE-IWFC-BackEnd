@@ -55,8 +55,7 @@ async function cryptoCreate(req, res) {
   console.log("");
   console.log("");
 
-  const { logoImgSrc, nameCrypto, nameSymbol, priceCurrent, website } =
-    req.body;
+  const { nameSymbol } = req.body;
 
   console.log(req.body);
 
@@ -68,7 +67,7 @@ async function cryptoCreate(req, res) {
   });
 
   if (!cryptoFound) {
-    const cryptoCreated = cryptoCardCreator(nameSymbol);
+    const cryptoCreated = await cryptoCardCreator(nameSymbol);
 
     res.json({
       message: "Crypto created successfully",
