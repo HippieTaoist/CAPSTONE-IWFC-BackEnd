@@ -63,9 +63,9 @@ async function cryptoCreate(req, res) {
   let foundUser = await userDecodeAndFind(res.locals.dataDecoded);
   // console.log(foundUser);
   let cryptoFound = await Crypto.findOne({
-    nameSymbol: nameSymbol,
+    symbol: nameSymbol.toUpperCase(),
   });
-
+  console.log(cryptoFound);
   if (!cryptoFound) {
     const cryptoCreated = await cryptoCardCreator(nameSymbol);
 
