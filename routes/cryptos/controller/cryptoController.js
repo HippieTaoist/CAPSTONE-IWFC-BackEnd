@@ -122,7 +122,12 @@ async function cryptoUpdate(req, res) {
 
       console.log(`we have a Current Price of $${newPrice}`);
 
-      cryptoFound.priceCurrent.set(newPrice);
+      let updateCryptoPrice = await Crypto.findByIdAndUpdate(
+        cryptoFound._id,
+        { priceCurrent: newPrice },
+        { new: true }
+      );
+      // cryptoFound.priceCurrent.set(newPrice);
 
       // pull from both if double truth comes in.
       if (userFavored && userUnfavored) {

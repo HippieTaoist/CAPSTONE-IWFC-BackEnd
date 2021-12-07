@@ -79,7 +79,7 @@ async function cryptoCardPriceUpdater(cryptoSymbol) {
     // console.log(`${crypto}: ${crypto_USDPriceObject[crypto]}`);
     crypto === cryptoSymbol && (returnedPrice = crypto_USDPriceObject[crypto]);
   }
-  console.log();
+  console.log(`${cryptoSymbol} has a current price of ${returnedPrice}`);
   return returnedPrice;
 }
 
@@ -87,4 +87,4 @@ async function siteCryptoCardInfoUpdater(siteCryptoArray) {
   `/v1/cryptocurrency/info?symbol=${siteCryptoArray}`;
 }
 
-module.exports = cryptoCardCreator;
+module.exports = { cryptoCardCreator, cryptoCardPriceUpdater };
