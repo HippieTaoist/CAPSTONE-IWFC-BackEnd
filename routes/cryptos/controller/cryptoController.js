@@ -34,13 +34,30 @@ async function cryptosGet(req, res) {
     //   let updatedPrice = cryptoCardPriceUpdater(crypto.symbol);
     // });
 
-    let updatePayload = await payload.map((crypto) => {
+    let updatePayload = await payload.map(async (crypto) => {
       console.log(crypto.symbol);
       console.log(crypto.priceCurrent);
-      let updatedPrice = cryptoCardPriceUpdater(crypto.symbol);
-      console.log(updatedPrice);
+      let updatedPrice = await cryptoCardPriceUpdater(crypto.symbol);
+
+      console.log("42", updatedPrice, crypto.priceCurrent);
+      return crypto;
     });
+
+    payload = await Crypto.find(
+      cryptoToGet
+        ? {
+            nameSymbol: cryptoToGet.toUpperCase(),
+          }
+        : {}
+    );
+
+    console.log("payload", payload);
     console.log(updatePayload);
+
+    Promise.all(updatePayload).then((value) => {
+      // console.log("46", value);
+    });
+
     //pro-api.coinmarketcap.com/v1/cryptocurrency/info?symbol=bnb
     // console.log(payload);
     // console.log(payload.priceCurrent);
@@ -48,7 +65,7 @@ async function cryptosGet(req, res) {
 
     // let CoinMarketCapAxios = AxiosCoinMarketCap(); // this API works as expected (only 300 calls a day)
     // console.log(CoinMarketCapAxios);
-    let crypto_USDPriceArray = await AxiosKuCoinGetAllPrices_USD();
+    // let crypto_USDPriceArray = await AxiosKuCoinGetAllPrices_USD();
 
     // console.log(crypto_USDPriceArray);
 
