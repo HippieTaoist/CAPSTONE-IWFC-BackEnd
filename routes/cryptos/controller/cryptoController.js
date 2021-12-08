@@ -115,28 +115,22 @@ async function cryptoUpdate(req, res) {
 
   try {
     if (cryptoFound && userFound) {
-      // console.log("We got both parties present cryptoFound and userFound");
-
-      // future place to check on admin level for updating crypto
-      // otherwise update priceCurrent, usersFavored, usersUnfavored, usersUnfavored
-      console.log("CF", cryptoFound.usersFavored);
       let newPrice = await cryptoCardPriceUpdater(cryptoFound.symbol);
-      let updatedCrypto;
-      console.log(`we have a Current Price of $${newPrice}`);
+      console.log(
+        `we have a Current ${cryptoFound.symbol}Price of $${newPrice}`
+      );
 
       await cryptoFound.updateOne(
         { $set: { priceCurrent: newPrice } },
         { new: true }
       );
 
-      // pull from both if double truth comes in.
+      await cryptoFavor(userFound, favored, cryptoFound);
 
-      updatedCrypto = await cryptoFavor(cryptoFound, favored, userFound);
-      console.log(updatedCrypto);
-
+      let favoredCrypto = await Crypto.findById(cryptoFound._id);
       res.json({
         message: "Success",
-        payload: updatedCrypto,
+        payload: favoredCrypto,
       });
 
       // let cryptoUpdated = await cryptoFound.save();

@@ -87,24 +87,25 @@ async function siteCryptoCardInfoUpdater(siteCryptoArray) {
   `/v1/cryptocurrency/info?symbol=${siteCryptoArray}`;
 }
 
-async function cryptoFavor(cryptoFound, favored, userFound) {
+async function cryptoFavor(userFound, favored, cryptoFound) {
   if (favored) {
-    // console.log("adding favored crypto");
-    await cryptoFound.updateOne(
+    let updatedUser = await cryptoFound.updateOne(
       {
         $addToSet: { usersFavored: userFound._id },
       },
       { new: true }
     );
-
     await cryptoFound.updateOne(
       {
         $pull: { usersUnfavored: userFound._id },
       },
-      { new: true },
-      await cryptoFound.save()
+      { new: true }
     );
-    return cryptoFound;
+    await cryptoFound.save();
+
+    // let updatedCrypto = await Crypto.findById(cryptoFound._id);
+
+    // return updatedCrypto;
   } else {
     await cryptoFound.updateOne(
       {
@@ -117,10 +118,13 @@ async function cryptoFavor(cryptoFound, favored, userFound) {
         {
           $pull: { usersFavored: userFound._id },
         },
-        { new: true },
-        await cryptoFound.save()
+        { new: true, upsert: true }
       );
-      return cryptoFound;
+      await cryptoFound.save();
+
+      // let updatedCrypto = await Crypto.findById(cryptoFound._id);
+
+      // return updatedCrypto;
     }
   }
 }
