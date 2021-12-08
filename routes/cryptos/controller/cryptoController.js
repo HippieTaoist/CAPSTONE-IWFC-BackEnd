@@ -124,45 +124,54 @@ async function cryptoDelete(req, res) {
   console.log("");
   console.log("");
 
-  // Only to used on admin level-tested on Thunderclient and all worked 11/21/21
-  const { _id } = req.body;
+  // Only be to used on admin level-tested on Thunderclient and all worked 11/21/21
+  const { _id, userLevel } = req.body;
   console.log(req.body);
   console.log(_id);
+  console.log(userLevel);
   console.log(res.locals.dataDecoded);
-  let userFound = await userDecodeAndFind(res.locals.dataDecoded);
+  try {
+    let userFound = await userDecodeAndFind(res.locals.dataDecoded);
+    console.log(userFound);
+    if (userLevel === "Adm!n" && _id) {
+      console.log("about to delete crypto");
+      let cryptoDeleted = await Crypto.deleteOne({
+        _id: _id,
+      });
 
-  console.log(userFound);
+      console.log(cryptoDeleted.deletedCount);
 
-  console.log("about to delete crypto");
-  let cryptoDeleted = await Crypto.deleteOne({
-    _id: _id,
-  });
-
-  console.log(cryptoDeleted.deletedCount);
-
-  switch (cryptoDeleted.deletedCount) {
-    case 1:
-      console.log(`You've deleted ${_id}`);
+      switch (cryptoDeleted.deletedCount) {
+        case 1:
+          console.log(`You've deleted ${_id}`);
+          res.json({
+            message: `Successfully Deleted ${_id}`,
+            itemsDeleted: cryptoDeleted.deletedCount,
+          });
+          break;
+        case 0:
+          console.log(
+            `You have NOT deleted ${_id}, as it is not found. please check Symbol`
+          );
+          res.status(404).json({
+            message: `You have NOT deleted ${_id}, as it is not found. Please check Symbol`,
+            itemsDeleted: cryptoDeleted.deletedCount,
+          });
+          break;
+        default:
+          console.log("what am i doing here?");
+          res.json({
+            message: "I should never hit this.",
+          });
+          break;
+      }
+    } else {
       res.json({
-        message: `Successfully Deleted ${_id}`,
-        itemsDeleted: cryptoDeleted.deletedCount,
+        message: "You are not authorized to access this ...",
       });
-      break;
-    case 0:
-      console.log(
-        `You have NOT deleted ${_id}, as it is not found. please check Symbol`
-      );
-      res.status(404).json({
-        message: `You have NOT deleted ${_id}, as it is not found. Please check Symbol`,
-        itemsDeleted: cryptoDeleted.deletedCount,
-      });
-      break;
-    default:
-      console.log("what am i doing here?");
-      res.json({
-        message: "I should never hit this.",
-      });
-      break;
+    }
+  } catch (error) {
+    console.log(error.message);
   }
 }
 
