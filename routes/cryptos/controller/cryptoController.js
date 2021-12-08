@@ -86,59 +86,28 @@ async function cryptoCreate(req, res) {
 }
 
 async function cryptoUpdate(req, res) {
-  console.log("");
-  console.log("");
   console.log("                cryptoUpdate Called");
-  console.log("");
-  console.log("");
-
-  const {
-    _id,
-    nameCrypto,
-    nameSymbol,
-    logoImgSrc,
-    priceCurrent,
-    website,
-    favored,
-    // userUnfavored,
-  } = req.body;
-
-  console.log(req.body);
-
-  console.log(res.locals.dataDecoded);
-
+  const { _id, favored } = req.body;
   let userFound = await userDecodeAndFind(res.locals.dataDecoded);
-  // console.log(userFound);
-
   let cryptoFound = await Crypto.findById(_id);
-  // console.log(cryptoFound);
-
   try {
     if (cryptoFound && userFound) {
       let newPrice = await cryptoCardPriceUpdater(cryptoFound.symbol);
-      console.log(
-        `we have a Current ${cryptoFound.symbol}Price of $${newPrice}`
-      );
-
+      console.log(`${cryptoFound.symbol} has a current price of $${newPrice}`);
       await cryptoFound.updateOne(
         { $set: { priceCurrent: newPrice } },
         { new: true }
       );
-
       await cryptoFavor(userFound, favored, cryptoFound);
-
       let favoredCrypto = await Crypto.findById(cryptoFound._id);
       res.json({
         message: "Success",
         payload: favoredCrypto,
       });
-
-      // let cryptoUpdated = await cryptoFound.save();
-      // console.log(cryptoUpdated);
-      // console.log("line165");
     } else
       res.status(404).json({
-        message: "Issue with findin crypto. Check again or add new crypto.",
+        message:
+          "Issue with finding crypto. Check again or contact support to add new crypto.",
       });
   } catch (error) {
     res.status(500).json({
