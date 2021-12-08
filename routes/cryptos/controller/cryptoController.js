@@ -28,16 +28,29 @@ async function cryptosGet(req, res) {
           }
         : {}
     );
+
+    // await payload.forEach((crypto) => {
+    //   console.log(crypto.symbol);
+    //   let updatedPrice = cryptoCardPriceUpdater(crypto.symbol);
+    // });
+
+    let updatePayload = await payload.map((crypto) => {
+      console.log(crypto.symbol);
+      console.log(crypto.priceCurrent);
+      let updatedPrice = cryptoCardPriceUpdater(crypto.symbol);
+      console.log(updatedPrice);
+    });
+    console.log(updatePayload);
     //pro-api.coinmarketcap.com/v1/cryptocurrency/info?symbol=bnb
-    console.log(payload);
-    console.log(payload.priceCurrent);
-    console.log(payload.nameSymbol);
+    // console.log(payload);
+    // console.log(payload.priceCurrent);
+    // console.log(payload.nameSymbol);
 
     // let CoinMarketCapAxios = AxiosCoinMarketCap(); // this API works as expected (only 300 calls a day)
     // console.log(CoinMarketCapAxios);
     let crypto_USDPriceArray = await AxiosKuCoinGetAllPrices_USD();
 
-    console.log(crypto_USDPriceArray);
+    // console.log(crypto_USDPriceArray);
 
     res.json({
       message: "cryptoGet has gotten your crypto(s)",
@@ -118,29 +131,14 @@ async function cryptoUpdate(req, res) {
 }
 
 async function cryptoDelete(req, res) {
-  console.log("");
-  console.log("");
   console.log("                cryptoDelete Called");
-  console.log("");
-  console.log("");
-
-  // Only be to used on admin level-tested on Thunderclient and all worked 11/21/21
   const { _id, userLevel } = req.body;
-  console.log(req.body);
-  console.log(_id);
-  console.log(userLevel);
-  console.log(res.locals.dataDecoded);
   try {
     let userFound = await userDecodeAndFind(res.locals.dataDecoded);
-    console.log(userFound);
     if (userLevel === "Adm!n" && _id) {
-      console.log("about to delete crypto");
       let cryptoDeleted = await Crypto.deleteOne({
         _id: _id,
       });
-
-      console.log(cryptoDeleted.deletedCount);
-
       switch (cryptoDeleted.deletedCount) {
         case 1:
           console.log(`You've deleted ${_id}`);
