@@ -76,10 +76,16 @@ async function cryptoCardPriceUpdater(cryptoSymbol) {
   let crypto_USDPriceObject = await AxiosKuCoinGetAllPrices_USD();
   let returnedPrice;
   for (const crypto in crypto_USDPriceObject) {
-    // console.log(`${crypto}: ${crypto_USDPriceObject[crypto]}`);
     crypto === cryptoSymbol && (returnedPrice = crypto_USDPriceObject[crypto]);
   }
-  console.log(`${cryptoSymbol} has a current price of ${returnedPrice}`);
+  let foundCrypto = await Crypto.findOne({ symbol: cryptoSymbol });
+  if (foundCrypto) {
+    let updatedCrypto = await foundCrypto.updateOne(
+      { $set: { priceCurrent: returnedPrice } },
+      { return: true }
+    );
+    return updatedCrypto;
+  }
   return returnedPrice;
 }
 
@@ -102,6 +108,16 @@ async function cryptoFavor(userFound, favored, cryptoFound) {
       { new: true }
     );
     await cryptoFound.save();
+
+    await userFound.updateOne(
+      {
+        $addToSet: {
+          favoringCryptos: cryptoFound._id,
+        },
+      },
+      { new: true }
+    );
+    userFound.save();
   } else {
     await cryptoFound.updateOne(
       {
@@ -118,6 +134,15 @@ async function cryptoFavor(userFound, favored, cryptoFound) {
       );
       await cryptoFound.save();
     }
+    await userFound.updateOne(
+      {
+        $pull: {
+          favoringCryptos: cryptoFound._id,
+        },
+      },
+      { new: true }
+    );
+    userFound.save();
   }
 }
 

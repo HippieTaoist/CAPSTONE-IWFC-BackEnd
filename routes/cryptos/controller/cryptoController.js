@@ -29,17 +29,12 @@ async function cryptosGet(req, res) {
         : {}
     );
 
-    // await payload.forEach((crypto) => {
-    //   console.log(crypto.symbol);
-    //   let updatedPrice = cryptoCardPriceUpdater(crypto.symbol);
-    // });
-
     let updatePayload = await payload.map(async (crypto) => {
       console.log(crypto.symbol);
       console.log(crypto.priceCurrent);
       let updatedPrice = await cryptoCardPriceUpdater(crypto.symbol);
 
-      console.log("42", updatedPrice, crypto.priceCurrent);
+      console.log("42", updatedPrice.priceCurrent, crypto.priceCurrent);
       return crypto;
     });
 
@@ -51,23 +46,10 @@ async function cryptosGet(req, res) {
         : {}
     );
 
-    console.log("payload", payload);
-    console.log(updatePayload);
-
     Promise.all(updatePayload).then((value) => {
-      // console.log("46", value);
+      console.log("46", value.priceCurrent);
     });
-
-    //pro-api.coinmarketcap.com/v1/cryptocurrency/info?symbol=bnb
-    // console.log(payload);
-    // console.log(payload.priceCurrent);
-    // console.log(payload.nameSymbol);
-
-    // let CoinMarketCapAxios = AxiosCoinMarketCap(); // this API works as expected (only 300 calls a day)
-    // console.log(CoinMarketCapAxios);
-    // let crypto_USDPriceArray = await AxiosKuCoinGetAllPrices_USD();
-
-    // console.log(crypto_USDPriceArray);
+    let crypto_USDPriceArray = await AxiosKuCoinGetAllPrices_USD();
 
     res.json({
       message: "cryptoGet has gotten your crypto(s)",
@@ -118,18 +100,25 @@ async function cryptoCreate(req, res) {
 async function cryptoUpdate(req, res) {
   console.log("                cryptoUpdate Called");
   const { _id, favored } = req.body;
+  console.log(req.body);
   let userFound = await userDecodeAndFind(res.locals.dataDecoded);
   let cryptoFound = await Crypto.findById(_id);
+  console.log(cryptoFound ? "We Found the Crypto" : "Not Crypto Found");
   try {
     if (cryptoFound && userFound) {
       let newPrice = await cryptoCardPriceUpdater(cryptoFound.symbol);
-      console.log(`${cryptoFound.symbol} has a current price of $${newPrice}`);
-      await cryptoFound.updateOne(
-        { $set: { priceCurrent: newPrice } },
-        { new: true }
+      console.log(newPrice);
+      // await cryptoFound.updateOne(
+      //   { $set: { priceCurrent: newPrice } },
+      //   { new: true }
+      //   );
+      console.log(
+        `${cryptoFound.symbol} has a current price of $${cryptoFound.priceCurrent}`
       );
       await cryptoFavor(userFound, favored, cryptoFound);
       let favoredCrypto = await Crypto.findById(cryptoFound._id);
+      console.log(favoredCrypto.usersFavored, "Favored Users");
+      console.log(favoredCrypto.usersUnfavored, "Unfavored Users");
       res.json({
         message: "Success",
         payload: favoredCrypto,
