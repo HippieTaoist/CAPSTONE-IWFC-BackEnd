@@ -132,6 +132,7 @@ async function userLogin(req, res) {
       }
     }
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       message: "Login Error.. WHAT DID YOU DO!!!!",
       error: errorHandler(err),
@@ -150,7 +151,14 @@ async function userProfile(req, res) {
     console.log(dataDecoded);
 
     res.json({
-      token: dataDecoded,
+      _id: dataDecoded._id,
+      firstName: dataDecoded.nameFirst,
+      lastName: dataDecoded.nameLast,
+      username: dataDecoded.username,
+      favoringCryptos: dataDecoded.favoringCryptos,
+      favoringCryptoPrograms: dataDecoded.favoringCryptoPrograms,
+      createdDate: decodedData.createdAt,
+      updatedLast: decodedData.updatedAt,
     });
   } catch (err) {
     res.status(500).json({
@@ -243,6 +251,7 @@ async function userUpdate(req, res) {
         }
       }
       break;
+
     default:
       console.log("not sure what to default yet");
       break;

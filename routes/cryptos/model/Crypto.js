@@ -9,7 +9,6 @@ const cryptoSchema = new mongoose.Schema(
     },
     name: {
       type: String,
-      validate: [isAlpha, "Letters Only"],
     },
     symbol: {
       type: String,
