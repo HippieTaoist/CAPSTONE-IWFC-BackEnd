@@ -18,7 +18,7 @@ async function cryptosGet(req, res) {
   console.log("");
   let { cryptoToGet } = req.body;
 
-  console.log(cryptoToGet);
+  // console.log(cryptoToGet);
 
   try {
     let payload = await Crypto.find(
@@ -34,7 +34,7 @@ async function cryptosGet(req, res) {
       console.log(crypto.priceCurrent);
       let updatedPrice = await cryptoCardPriceUpdater(crypto.symbol);
 
-      console.log("42", updatedPrice.priceCurrent, crypto.priceCurrent);
+      console.log("42", updatedPrice, crypto.priceCurrent);
       return crypto;
     });
 
