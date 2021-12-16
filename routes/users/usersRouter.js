@@ -1,30 +1,31 @@
-var express = require('express');
+var express = require("express");
 var router = express.Router();
 
-const {
-  middlewareJwt
-} = require('../users/lib/middlewareJwt/middlewareJwt')
+const { middlewareJwt } = require("../users/lib/middlewareJwt/middlewareJwt");
 
 const {
   usersGet,
+  userGet,
   userCreate,
   userLogin,
   userProfile,
   userUpdate,
   userDelete,
-} = require('./controller/userController')
+} = require("./controller/userController");
 
 /* GET users listing. */
-router.get('/', middlewareJwt, usersGet)
+router.get("/", middlewareJwt, usersGet);
 
-router.post('/user-create', userCreate)
+router.get("/user-get/:username", middlewareJwt, userGet);
 
-router.post('/user-login', userLogin)
+router.post("/user-create", userCreate);
 
-router.get('/user-profile', middlewareJwt, userProfile)
+router.post("/user-login", userLogin);
 
-router.put('/user-update', middlewareJwt, userUpdate)
+router.get("/user-profile", middlewareJwt, userProfile);
 
-router.delete('/user-delete', middlewareJwt, userDelete)
+router.put("/user-update", middlewareJwt, userUpdate);
+
+router.delete("/user-delete", middlewareJwt, userDelete);
 
 module.exports = router;

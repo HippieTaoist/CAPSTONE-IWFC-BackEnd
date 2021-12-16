@@ -23,8 +23,31 @@ async function usersGet(req, res) {
   console.log("");
 
   try {
-    let payload = await User.find(req.body);
+    let payload = await User.find({});
 
+    res.json({
+      message: "Successfully retrieved",
+      payload: payload,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Failed Fetching",
+      error: errorHandler(err),
+    });
+  }
+}
+
+async function userGet(req, res) {
+  console.log("");
+  console.log("");
+  console.log("                userGet Called");
+  console.log("");
+  console.log("");
+
+  try {
+    console.log(req.params);
+    let payload = await User.findOne({ username: req.params.username });
+    console.log(payload);
     res.json({
       message: "Successfully retrieved",
       payload: payload,
@@ -43,7 +66,8 @@ async function userCreate(req, res) {
   console.log("                userCreate Called");
   console.log("");
   console.log("");
-  const { nameFirst, nameLast, username, email, password } = req.body;
+  const { userLevel, nameFirst, nameLast, username, email, password } =
+    req.body;
 
   console.log(req.body);
 
@@ -52,6 +76,7 @@ async function userCreate(req, res) {
     let passwordHashed = await passwordHasher(password); //await bcrypt.hash(password, salt);
     console.log("passwordHashed", passwordHashed);
     const userCreated = new User({
+      userLevel,
       nameFirst,
       nameLast,
       username,
@@ -66,6 +91,7 @@ async function userCreate(req, res) {
       payload: savedUser,
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       message: "Error in Creating User",
       error: errorHandler(err),
@@ -115,10 +141,30 @@ async function userLogin(req, res) {
           error: "Please check email and password",
         });
       } else {
+        const {
+          _id,
+          email,
+          nameFirst,
+          nameLast,
+          username,
+          favoringCryptos,
+          favoringCryptoPrograms,
+          createdAt,
+          updatedAt,
+        } = userFound;
         let jwtToken = jwt.sign(
           {
-            email: userFound.email,
-            username: userFound.username,
+            email,
+            username,
+
+            _id,
+            firstName: nameFirst,
+            lastName: nameLast,
+            username: username,
+            favoringCryptos,
+            favoringCryptoPrograms,
+            createdDate: createdAt,
+            updatedLast: updatedAt,
           },
           process.env.SECRET_KEY,
           {
@@ -150,15 +196,28 @@ async function userProfile(req, res) {
     const dataDecoded = res.locals.dataDecoded;
     console.log(dataDecoded);
 
+    const {
+      _id,
+      nameFirst,
+      nameLast,
+      username,
+      favoringCryptos,
+      favoringCryptoPrograms,
+      createdAt,
+      updatedAt,
+    } = await User.findOne({ username: dataDecoded.username });
+
+    console.log(nameFirst, nameLast);
+
     res.json({
-      _id: dataDecoded._id,
-      firstName: dataDecoded.nameFirst,
-      lastName: dataDecoded.nameLast,
-      username: dataDecoded.username,
-      favoringCryptos: dataDecoded.favoringCryptos,
-      favoringCryptoPrograms: dataDecoded.favoringCryptoPrograms,
-      createdDate: decodedData.createdAt,
-      updatedLast: decodedData.updatedAt,
+      _id: _id,
+      firstName: nameFirst,
+      lastName: nameLast,
+      username: username,
+      favoringCryptos: favoringCryptos,
+      favoringCryptoPrograms: favoringCryptoPrograms,
+      createdDate: createdAt,
+      updatedLast: updatedAt,
     });
   } catch (err) {
     res.status(500).json({
@@ -283,14 +342,17 @@ async function userDelete(req, res) {
 
   console.log(userDeletePasswordCheck);
   console.log(userDeleteDoubleCheck);
-
+  // add in doublecheck to personal account delete.
   User.deleteOne({
     _id: _id,
   }).then(console.log(`User has been deleted and declared ${userFound}`));
+  res.json({ message: "user deleted" });
+  // add admin section  to delete without password.
 }
 
 module.exports = {
   usersGet,
+  userGet,
   userCreate,
   userLogin,
   userProfile,
