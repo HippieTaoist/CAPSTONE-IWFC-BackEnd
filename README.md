@@ -50,13 +50,15 @@
 			- they initiated creation
 			- there are no other users favoring the crypto
 		- this will hopefully bring down amount of bad creations.
-
+## API
+	-3rd Party API	called from CoinMarketCap for coin info and KuCoin for updated price. 
+	-Price is updated on every update call
 
 ## Still Working On
 -Users will have CRUD operations on the programs they choose to associate with.
 Favorite Programs to account
 Sort Program through multiple params
 Sort Crypto through params
--3rd Party API	Plan to use api from CoinMarketCap or crypto.com or KuCoin possibly. The first seems to be the best, but limited to only 11 endpoints. if i want more I may pull from alternate apis. All seem to have good documentation.
+
 
 Hooks	Hooks will be used through out to make use of advanced react technologies, strategies and concepts.
