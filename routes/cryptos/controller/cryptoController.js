@@ -34,7 +34,7 @@ async function cryptosGet(req, res) {
       console.log(crypto.priceCurrent);
       let updatedPrice = await cryptoCardPriceUpdater(crypto.symbol);
 
-      console.log("42", updatedPrice, crypto.priceCurrent);
+      // console.log("42", updatedPrice, crypto.priceCurrent);
       return crypto;
     });
 
@@ -54,6 +54,30 @@ async function cryptosGet(req, res) {
     res.json({
       message: "cryptoGet has gotten your crypto(s)",
       payload: payload,
+      pricePayload: crypto_USDPriceArray,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Can't get cryptos right now",
+      error: errorHandler(error),
+    });
+  }
+}
+
+async function cryptoGet(req, res) {
+  console.log(req.params);
+  try {
+    let payload = await Crypto.findById(req.params.id);
+
+    console.log(payload);
+
+    await cryptoCardPriceUpdater(payload.symbol);
+
+    let crypto_USDPriceArray = await AxiosKuCoinGetAllPrices_USD();
+    let updatePayload = await Crypto.findById(payload._id);
+    res.json({
+      message: "cryptoGet has gotten your crypto(s)",
+      payload: updatePayload,
       pricePayload: crypto_USDPriceArray,
     });
   } catch (error) {
@@ -103,7 +127,7 @@ async function cryptoUpdate(req, res) {
   console.log(req.body);
   let userFound = await userDecodeAndFind(res.locals.dataDecoded);
   let cryptoFound = await Crypto.findById(_id);
-  console.log(cryptoFound ? "We Found the Crypto" : "Not Crypto Found");
+  console.log(cryptoFound ? "We Found the Crypto" : "No Crypto Found");
   try {
     if (cryptoFound && userFound) {
       let newPrice = await cryptoCardPriceUpdater(cryptoFound.symbol);
@@ -119,9 +143,10 @@ async function cryptoUpdate(req, res) {
       let favoredCrypto = await Crypto.findById(cryptoFound._id);
       console.log(favoredCrypto.usersFavored, "Favored Users");
       console.log(favoredCrypto.usersUnfavored, "Unfavored Users");
+      console.log(userFound.favoringCryptos, "Cryptos Favored Users");
       res.json({
         message: "Success",
-        payload: favoredCrypto,
+        payload: { userFound, favoredCrypto },
       });
     } else
       res.status(404).json({
@@ -181,6 +206,7 @@ async function cryptoDelete(req, res) {
 
 module.exports = {
   cryptosGet,
+  cryptoGet,
   cryptoCreate,
   cryptoUpdate,
   cryptoDelete,
