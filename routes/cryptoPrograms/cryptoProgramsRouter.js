@@ -6,6 +6,7 @@ const {
 } = require("../../routes/users/lib/middlewareJwt/middlewareJwt");
 
 const {
+  cryptoProgramGet,
   cryptoProgramsGet,
   cryptoProgramCreate,
   cryptoProgramUpdate,
@@ -14,6 +15,8 @@ const {
 
 /* GET cryptoProgramsGetAll */
 router.get("/", cryptoProgramsGet);
+
+router.get("/:id", cryptoProgramGet);
 
 router.post("/crypto-program-create", middlewareJwt, cryptoProgramCreate);
 

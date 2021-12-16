@@ -34,6 +34,28 @@ async function cryptoProgramsGet(req, res) {
   }
 }
 
+async function cryptoProgramGet(req, res) {
+  console.log("");
+  console.log("");
+  console.log("                cryptoProgramsGet Called");
+  console.log("");
+  console.log("");
+
+  try {
+    let cryptoProgram = await CryptoProgram.findById(req.params.id);
+
+    res.json({
+      message: "cryptoProgramsGet has gotten your Crypto Program",
+      payload: cryptoProgram,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Trouble retrieving Crypto Program",
+      error: errorHandler(error),
+    });
+  }
+}
+
 async function cryptoProgramCreate(req, res) {
   console.log("");
   console.log("");
@@ -234,6 +256,7 @@ async function cryptoProgramDelete(req, res) {
 }
 
 module.exports = {
+  cryptoProgramGet,
   cryptoProgramsGet,
   cryptoProgramCreate,
   cryptoProgramUpdate,
