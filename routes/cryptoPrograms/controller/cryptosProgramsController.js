@@ -37,13 +37,15 @@ async function cryptoProgramsGet(req, res) {
 async function cryptoProgramGet(req, res) {
   console.log("");
   console.log("");
-  console.log("                cryptoProgramsGet Called");
+  console.log("                cryptoProgramGet Called");
   console.log("");
   console.log("");
+
+  console.log(req.params);
 
   try {
     let cryptoProgram = await CryptoProgram.findById(req.params.id);
-
+    console.log(cryptoProgram);
     res.json({
       message: "cryptoProgramsGet has gotten your Crypto Program",
       payload: cryptoProgram,
