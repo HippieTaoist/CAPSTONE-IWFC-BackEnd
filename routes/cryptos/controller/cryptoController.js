@@ -16,19 +16,10 @@ async function cryptosGet(req, res) {
   console.log("                cryptosGet Called");
   console.log("");
   console.log("");
-  let { cryptoToGet } = req.body;
-
-  // console.log(cryptoToGet);
 
   try {
-    let payload = await Crypto.find(
-      cryptoToGet
-        ? {
-            nameSymbol: cryptoToGet.toUpperCase(),
-          }
-        : {}
-    );
-
+    let payload = await Crypto.find({});
+    console.log(payload);
     let updatePayload = await payload.map(async (crypto) => {
       console.log(crypto.symbol);
       console.log(crypto.priceCurrent);
@@ -38,13 +29,7 @@ async function cryptosGet(req, res) {
       return crypto;
     });
 
-    payload = await Crypto.find(
-      cryptoToGet
-        ? {
-            nameSymbol: cryptoToGet.toUpperCase(),
-          }
-        : {}
-    );
+    payload = await Crypto.find({});
 
     Promise.all(updatePayload).then((value) => {
       console.log("46", value.priceCurrent);

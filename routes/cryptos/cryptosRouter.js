@@ -12,7 +12,7 @@ const {
 } = require("./controller/cryptoController");
 
 /* GET Cryptos Saved By Users */
-router.get("/", middlewareJwt, cryptosGet);
+router.get("/", cryptosGet);
 
 router.get("/crypto-get/:id", middlewareJwt, cryptoGet);
 

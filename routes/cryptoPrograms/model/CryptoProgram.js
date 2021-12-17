@@ -1,86 +1,112 @@
-mongoose = require('mongoose');
+mongoose = require("mongoose");
 
-const {
-    isURL
-} = require('validator');
+const { isURL } = require("validator");
 
-const cryptoProgramSchema = new mongoose.Schema({
+const cryptoProgramSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        unique: true,
+      type: String,
+      unique: true,
     },
     developer: {
-        type: String,
+      type: String,
     },
     description: {
-        type: String,
+      type: String,
     },
     url: {
-        type: String,
-        validate: [isURL, "Crypto Program URL incorrectly formatted"]
+      type: String,
+      validate: [isURL, "Crypto Program URL incorrectly formatted"],
     },
     urlSiteRef: {
-        type: String,
-        validate: [isURL, "Crypto Program URL incorrectly formatted"]
+      type: String,
+      validate: [isURL, "Crypto Program URL incorrectly formatted"],
     },
     urlLogo: {
-        type: String,
-        validate: [isURL, "Logo img must be valid URL"]
+      type: String,
+      validate: [isURL, "Logo img must be valid URL"],
     },
     type: {
-        type: String,
+      type: String,
     },
-    earnOpportunities: {
-        rewardDaily: [{
-            type: String
-        }],
-        rewardHourly: [{
-            type: String
-        }],
-        rewardBonus: [{
+    earnOpportunities: [
+      {
+        rewardDaily: [
+          {
             type: String,
-        }],
-        offerWalls: [{
+          },
+        ],
+        rewardHourly: [
+          {
             type: String,
-        }],
-        promotions: [{
+          },
+        ],
+        rewardBonus: [
+          {
             type: String,
-        }]
-    },
-    withdrawalOptions: [{
+          },
+        ],
+        offerWalls: [
+          {
+            type: String,
+          },
+        ],
+        promotions: [
+          {
+            type: String,
+          },
+        ],
+      },
+    ],
+    withdrawalOptions: [
+      {
         type: String,
-    }],
-    withdrawalMinAmount: [{
+      },
+    ],
+    withdrawalMinAmount: [
+      {
         type: String,
-    }],
+      },
+    ],
     withdrawalFrequency: {
-        type: String
+      type: String,
     },
-    withdrawalWallets: [{
-        type: String
-    }],
-    access: [{
+    withdrawalWallets: [
+      {
         type: String,
-    }],
-    cryptosAffiliated: [{
+      },
+    ],
+    access: [
+      {
+        type: String,
+      },
+    ],
+    cryptosAffiliated: [
+      {
         type: mongoose.Schema.ObjectId,
-        ref: "crypto"
-    }],
+        ref: "crypto",
+      },
+    ],
     nameCreator: {
-        type: mongoose.Schema.ObjectId,
-        ref: "user"
+      type: mongoose.Schema.ObjectId,
+      ref: "user",
     },
-    usersFavored: [{
+    usersFavored: [
+      {
         type: mongoose.Schema.ObjectId,
-        ref: "user"
-    }],
-    usersUnfavored: [{
+        ref: "user",
+      },
+    ],
+    usersUnfavored: [
+      {
         type: mongoose.Schema.ObjectId,
-        ref: "user"
-    }],
-
-}, {
+        ref: "user",
+      },
+    ],
+  },
+  {
     timestamps: true,
-})
+  }
+);
 
-module.exports = mongoose.model("cryptoProgram", cryptoProgramSchema)
+module.exports = mongoose.model("cryptoProgram", cryptoProgramSchema);

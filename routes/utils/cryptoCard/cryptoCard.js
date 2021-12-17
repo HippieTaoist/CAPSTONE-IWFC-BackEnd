@@ -31,20 +31,22 @@ async function cryptoCardCreator(cryptoSymbol) {
         }
       );
 
-      console.log(foundCryptoDetails.data.data[uppercaseSymbol]);
-
+      console.log(foundCryptoDetails.data.data[uppercaseSymbol].description);
+      let theDescrip =
+        foundCryptoDetails.data.data[uppercaseSymbol].description;
       let {
         id,
         name,
         symbol,
         category,
+        description,
         logo,
         slug,
-        logoImgSrc,
         subreddit,
         tags,
         tagNames,
         urls,
+        twitter_username,
       } = foundCryptoDetails.data.data[uppercaseSymbol];
 
       let currentPrice = await cryptoCardPriceUpdater(uppercaseSymbol);
@@ -55,6 +57,7 @@ async function cryptoCardCreator(cryptoSymbol) {
         name,
         symbol,
         category,
+        description,
         logo,
         priceCurrent: currentPrice,
         slug,
@@ -63,6 +66,7 @@ async function cryptoCardCreator(cryptoSymbol) {
         tags,
         tagNames,
         urls,
+        twitter_username,
       });
       let cryptoSaved = await newCrypto.save();
       return cryptoSaved;
